@@ -663,7 +663,7 @@ Dockerfile文件
 
 ```dockerfile
 #继承镜像为centos
-FROM centos
+FROM centos:7
 #指定作者和邮箱
 MAINTAINER huangyb<huangyb@123456.com>
 
