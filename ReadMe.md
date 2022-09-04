@@ -588,11 +588,11 @@ Docker容器，容器是直接提供服务的。
 
 [Tomcat的Dockerfile文件](https://github.com/docker-library/docs/tree/master/tomcatv)
 
-- FROM：基础镜像，当前新镜像是基于哪个镜像的，指定一个已经存在的镜像作为模板，第一条必须是from
+- **FROM**：基础镜像，当前新镜像是基于哪个镜像的，指定一个已经存在的镜像作为模板，第一条必须是from
 
-- MAINTAINER：镜像维护者的姓名和邮箱地址
+- **MAINTAINER**：镜像维护者的姓名和邮箱地址
 
-- RUN：容器构建时需要运行的命令
+- **RUN**：容器构建时需要运行的命令
 
   - shell格式
 
@@ -606,28 +606,29 @@ Docker容器，容器是直接提供服务的。
 
   - RUN是在 docker build时运行
 
-- EXPOSE：当前容器对外暴露出的端口
+- **EXPOSE**：当前容器对外暴露出的端口
 
-- WORKDIR：指定在创建容器后，终端默认登陆的进来工作目录，一个落脚点
+- **WORKDIR**：指定在创建容器后，终端默认登陆的进来工作目录，一个落脚点
 
-- USER：指定该镜像以什么样的用户去执行，如果都不指定，默认是root
+- **USER**：指定该镜像以什么样的用户去执行，如果都不指定，默认是root
 
-- ENV：用来在构建镜像过程中设置环境变量
+- **ENV**：用来在构建镜像过程中设置环境变量
+  
   - ENV MY_PATH /usr/mytest这个环境变量可以在后续的任何RUN指令中使用，这就如同在命令前面指定了环境变量前缀一样；也可以在其它指令中直接使用这些环境变量，比如：WORKDIR $MY_PATH
+  
+- **ADD**：将宿主机目录下的文件拷贝进镜像且会自动处理URL和解压tar压缩包
 
-- ADD：将宿主机目录下的文件拷贝进镜像且会自动处理URL和解压tar压缩包
+- **COPY**：类似ADD，拷贝文件和目录到镜像中。 将从构建上下文目录中 <源路径> 的文件/目录复制到新的一层的镜像内的 <目标路径> 位置
 
-- COPY：类似ADD，拷贝文件和目录到镜像中。 将从构建上下文目录中 <源路径> 的文件/目录复制到新的一层的镜像内的 <目标路径> 位置
+- **VOLUME**：容器数据卷，用于数据保存和持久化工作
 
-- VOLUME：容器数据卷，用于数据保存和持久化工作
-
-- CMD：指定容器启动后的要干的事情
+- **CMD**：指定容器启动后的要干的事情
 
   - Dockerfile 中可以有多个 CMD 指令，但只有最后一个生效，CMD 会被 docker run 之后的参数替换
-  - 举例：`docker run -it -p 8080:8080 容器ID /bin/bash` 容器启动，但访问失败
+  - 举例：`docker run -it -p 8080:8080 容器ID /bin/bash` 容器Tomcat启动，但访问失败
   - CMD是在docker run 时运行，RUN是在 docker build时运行。
 
-- ENTRYPOINT：也是用来指定一个容器启动时要运行的命令
+- **ENTRYPOINT**：也是用来指定一个容器启动时要运行的命令
 
   - 类似于 CMD 指令，但是ENTRYPOINT不会被docker run后面的命令覆盖， 而且这些命令行参数会被当作参数送给 ENTRYPOINT 指令指定的程序
 
@@ -729,9 +730,114 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.341-b10, mixed mode)
 
 ### 3、Docker微服务实战
 
+
+
 ### 4、网络
 
+```cmd
+[root@master ~]# ifconfig
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:41:a8:1a:78  txqueuelen 0  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.6.128  netmask 255.255.255.0  broadcast 192.168.6.255
+        ether 00:0c:29:6d:60:68  txqueuelen 1000  (Ethernet)
+        RX packets 8426  bytes 1038295 (1013.9 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 8719  bytes 4526589 (4.3 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+flannel.1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1450
+        inet 10.244.0.0  netmask 255.255.255.255  broadcast 0.0.0.0
+        ether 5e:7a:15:ae:6c:60  txqueuelen 0  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 17 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 154845  bytes 30894310 (29.4 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 154845  bytes 30894310 (29.4 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+virbr0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 192.168.122.1  netmask 255.255.255.0  broadcast 192.168.122.255
+        ether 52:54:00:48:84:92  txqueuelen 1000  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+查看docker网络模式：
+
+```cmd
+#默认创建两种网络模式
+[root@master ~]# docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+f711d6ddb4fb   bridge    bridge    local
+7a20ef4aeaea   host      host      local
+862f657dcf4c   none      null      local
+```
+
+
+
+#### 4.1 介绍
+
+
+
+#### 4.2 常见基本命令
+
+(1) 全部命令
+
+```bash
+[root@master ~]# docker network --help
+
+Usage:  docker network COMMAND
+
+Manage networks
+
+Commands:
+  connect     Connect a container to a network
+  create      Create a network
+  disconnect  Disconnect a container from a network
+  inspect     Display detailed information on one or more networks
+  ls          List networks
+  prune       Remove all unused networks
+  rm          Remove one or more networks
+```
+
+(2) 查看网络
+
+```bash
+[root@master ~]# docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+f711d6ddb4fb   bridge    bridge    local
+7a20ef4aeaea   host      host      local
+862f657dcf4c   none      null      local
+```
+
+
+
+#### 4.3 作用
+
+#### 4.4 网络模式
+
+#### 4.5 架构图
+
+
+
 ### 5、Docker-compose容器编排
+
+
 
 ### 6、可视化工具Portainer
 
