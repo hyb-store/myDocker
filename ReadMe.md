@@ -328,10 +328,19 @@ docker cp  容器ID:容器内路径 目的主机路径
 - 导入与导出容器
 
 ```bash
+#docker export container_id：将一个容器导出为文件，再使用docker import 命令将容器导入成为一个新的镜像，但是相比docker save命令，容器文件会丢失所有元数据和历史记录，仅保存容器当时的状态，相当于虚拟机快照。
 #export 导出容器的内容留作为一个tar归档文件[对应import命令]
 docker export 容器ID > 文件名.tar
 #import 从tar包中的内容创建一个新的文件系统再导入为镜像[对应export]
 cat 文件名.tar | docker import - 镜像用户/镜像名:镜像版本号
+```
+
+- 导入导出镜像
+
+```bash
+#docker save images_name：将一个镜像导出为文件，再使用docker load命令将文件导入为一个镜像，会保存该镜像的的所有历史记录。比docker export命令导出的文件大，很好理解，因为会保存镜像的所有历史记录。
+
+#docker load导入镜像库存储文件到本地镜像库
 ```
 
 
