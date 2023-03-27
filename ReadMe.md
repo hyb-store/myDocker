@@ -24,6 +24,8 @@ Docker 和传统虚拟化方式的不同之处：
 
 #### 2.1 安装步骤
 
+##### 2.1.1 使用yum安装
+
 1.卸载老版本
 
 ```bash
@@ -72,11 +74,27 @@ $ sudo docker version
 $ sudo docker run hello-world
 ```
 
+##### 2.1.2 使用rpm安装
+
+```bash
+#https://download.docker.com/linux/centos/
+wget https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-18.09.9-3.el7.x86_64.rpm
+
+yum install ./docker-ce-18.09.9-3.el7.x86_64.rpm
+
+systemctl enable docker
+systemctl start docker
+```
+
+
+
 #### 2.2 卸载步骤
 
 ```bash
+#Uninstall the Docker Engine, CLI, containerd, and Docker Compose packages:
 $ sudo systemctl stop docker
 $ sudo yum remove docker-ce docker-ce-cli containerd.io
+#Images, containers, volumes, or customized configuration files on your host are not automatically removed. To delete all images, containers, and volumes:
 $ sudo rm -rf /var/lib/docker
 $ sudo rm -rf /var/lib/containerd
 ```
@@ -91,7 +109,17 @@ $ sudo rm -rf /var/lib/containerd
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "registry-mirrors": ["https://1056mbof.mirror.aliyuncs.com"]
+  "registry-mirrors": [
+    "https://1056mbof.mirror.aliyuncs.com"
+  ],
+  "insecure-registries" : [
+    "0.0.0.0/0"
+  ],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "10"
+  }
 }
 EOF
 sudo systemctl daemon-reload
