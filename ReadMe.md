@@ -59,6 +59,7 @@ $ sudo yum-config-manager \
 
 ```bash
 $ sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# yum install docker-ce-18.09.9-3.el7 docker-ce-cli-18.09.9-3.el7 containerd.io docker-buildx-plugin docker-compose-plugindocker
 ```
 
 5.启动docker
